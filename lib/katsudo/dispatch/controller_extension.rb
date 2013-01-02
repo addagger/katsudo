@@ -1,18 +1,27 @@
 module Katsudo
   module Dispatch
+    
+    class Collector < Array
+      def store!
+        each {|activity| activity.save}
+      end
+    end
+    
     module ControllerExtension
       extend ActiveSupport::Concern
 
       name = Katsudo.config.name
-      current_activity = "current_#{name}"
+      class_name = Katsudo.config.activity_class_name
       activity_user = "#{name}_user"
       filter_method_name = "track_#{name}"
-      association_name = "left_#{name.pluralize}"
 
       module_eval <<-EOV
 
         included do
-          helper_method :#{current_activity}, :#{activity_user}
+          helper_method :#{name}, :#{activity_user}
+          if Rails.version >= "4.0.0"
+            add_flash_types(:messages)
+          end
         end
 
         module ClassMethods
@@ -21,25 +30,40 @@ module Katsudo
             options = args.extract_options!
             class_eval do
               before_filter options do
-                @#{current_activity} ||= #{activity_user}.#{association_name}.build
+                @katsudo_collector ||= Katsudo::Dispatch::Collector.new
               end
               after_filter options do
-                if #{current_activity}.try(:save) # validation logic
-                  #{current_activity}.flash?
-                  flash[#{current_activity}.flash_key] = #{current_activity}.flash_message
-                end
+                @katsudo_collector.store!
               end
             end
           end
 
         end
 
-        def #{activity_user} # override
-          current_user
+        def #{name}(name, resource=nil)
+          activity_class = name.to_s.classify.constantize
+          if activity_class <= #{class_name}
+            activity = activity_class.new(:user => #{activity_user}, :resource => resource)
+          else
+            raise(TypeError, "#{class_name} expected: \#{activity_class.class} passed")
+          end
+          if @katsudo_collector
+            activity.tap {|a| @katsudo_collector << a}
+          else
+            @last_activity = activity
+          end
         end
 
-        def #{current_activity}
-          @#{current_activity}
+        def #{name}_message(*args)
+          render_to_string(#{name}(*args)).html_safe
+        end
+
+        def last_#{name}
+          @last_#{name}||@katsudo_collector.try(:last)
+        end
+
+        def #{activity_user} # override
+          current_user
         end
 
       EOV

@@ -12,8 +12,6 @@ module Katsudo
         belongs_to :user, :polymorphic => true
 
         validates_presence_of :user
-        
-        validate :active
       end
     
       module ClassMethods
@@ -23,45 +21,21 @@ module Katsudo
           "#{table_name}/#{name.underscore}"
         end
       end
-    
-      def active
-        errors.add(:base, "Disabled!") if disabled?
-      end
-    
-      def disable!
-        @enabled = false
+      
+      def to_s
+        message
       end
       
-      def disabled?
-        !enabled?
-      end
-      
-      def enabled?
-        @enabled.nil? ? true : @enabled
-      end
-      
-      def enable!
-        @enabled = true
+      def title
+        "Katsudo!"
       end
     
-      def message # override
-        %Q{
-          <h3>Katsudo!<h3>
-          #{self.class.name} object: [<strong>#{persisted? ? id : "new record"}</strong>]<br/>
-          Define method <code>message</code> in your Activity subclass to override this message.
-        }.html_safe
-      end
-      
-      def flash? # override
-        true
+      def message # override   
+        "Message information. See documentation for details!"
       end
       
       def flash_key # override
         :notice
-      end
-    
-      def flash_message # override
-        message
       end
     
     end

@@ -1,5 +1,5 @@
 require "katsudo/dispatch/controller_extension"
-require "katsudo/dispatch/flash"
+require "katsudo/dispatch/flash_messages"
 
 module Katsudo
   module Dispatch      

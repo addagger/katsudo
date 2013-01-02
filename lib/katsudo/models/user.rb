@@ -10,7 +10,7 @@ module Katsudo
           include Scopes
         end
       end
-    
+      
     end
   end
 end
