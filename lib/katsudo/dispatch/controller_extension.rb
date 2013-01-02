@@ -20,7 +20,7 @@ module Katsudo
         included do
           helper_method :#{name}, :#{activity_user}
           if Rails.version >= "4.0.0"
-            add_flash_types(:messages)
+            add_flash_types(:stack)
           end
         end
 

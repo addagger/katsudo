@@ -1,7 +1,7 @@
 module Katsudo
   module Dispatch
     
-    class Messages
+    class FlashStack
       class Item
         attr_accessor :type, :text
         def initialize(type, text)
@@ -34,8 +34,8 @@ module Katsudo
     module FlashExtension
       extend ActiveSupport::Concern
       
-      def messages
-        self[:messages] ||= Messages.new
+      def stack
+        self[:stack] ||= FlashStack.new
       end
       
     end
