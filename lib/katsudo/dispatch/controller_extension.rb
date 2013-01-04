@@ -19,9 +19,6 @@ module Katsudo
 
         included do
           helper_method :#{name}, :#{activity_user}
-          if Rails.version >= "4.0.0"
-            add_flash_types(:stack)
-          end
         end
 
         module ClassMethods
@@ -55,7 +52,8 @@ module Katsudo
         end
 
         def #{name}_message(*args)
-          render_to_string(#{name}(*args)).html_safe
+          activity = #{name}(*args)
+          {activity.flash_key => render_to_string(activity)}
         end
 
         def last_#{name}

@@ -2,42 +2,55 @@ module Katsudo
   module Dispatch
     
     class FlashStack
-      class Item
-        attr_accessor :type, :text
-        def initialize(type, text)
-          @type = type.to_sym
-          @text = text.to_s
-        end
-        
-        def inspect
-          @text
-        end
-      end
-      
-      attr_reader :scope
-      delegate :any?, :many?, :present?, :each, :map, :collect, :group_by, :to => :scope
-      
-      def initialize
-        @scope = []
+      def initialize(flash)
+        @flash = flash
+        @stack = {}
       end
 
-      def add(type, text)
-        @scope << Item.new(type, text)
+      def []=(k,v)
+        @stack[k] = Array(v)
+      end
+
+      def [](k)
+        @stack[k] ||= []
       end
       
-      def grouped
-        group_by(&:type)
+      def method_missing(*args, &block)
+        @stack.send(*args, &block)
+      end
+      
+      def use
+        @stack.dup.tap do
+          @stack.clear
+        end
       end
       
     end
     
-    module FlashExtension
+    module FlashHashExtension
       extend ActiveSupport::Concern
       
-      def stack
-        self[:stack] ||= FlashStack.new
+      included do
+        class_eval do
+          def empty?
+            @flashes.empty? && (@stack.nil? ? true : @stack.empty?)
+          end
+        end
       end
       
+      def <<(*hashes)
+        hashes.each do |hash|
+          hash.each do |k,v|
+            Array(v).each do |value|
+              stack[k] << value
+            end
+          end
+        end
+      end
+      
+      def stack
+        @stack ||= FlashStack.new(self)
+      end
     end
     
   end
