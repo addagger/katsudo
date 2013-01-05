@@ -73,7 +73,7 @@ Partial for activity:
     <strong><%= create_object.title %></strong>
     <p><%= create_object.message %></p>
 
-If you want store each activity type in controller as any filter:
+If you want store each activity, add in controller as any filter:
 
     trace_activity :only => [:create, :update, :destroy]
 
