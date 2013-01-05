@@ -56,26 +56,26 @@ Controller:
   
 Model:
 
-   class CreateObject < Activity
-     def title
-       "Saved!"
-     end
+    class CreateObject < Activity
+      def title
+        "Saved!"
+      end
 
-     def message
-       "#{resource.class.model_name.human} was created"
-     end
-   end
+      def message
+        "#{resource.class.model_name.human} was created"
+      end
+    end
 
 Partial for activity:
 
-   # views/activities/create_object.html.erb
+    # views/activities/create_object.html.erb
 
-   <strong><%= create_object.title %></strong>
-   <p><%= create_object.message %></p>
+    <strong><%= create_object.title %></strong>
+    <p><%= create_object.message %></p>
 
 If you want store each activity type in controller as any filter:
 
-   trace_activity :only => [:create, :update, :destroy]
+    trace_activity :only => [:create, :update, :destroy]
 
 
 
