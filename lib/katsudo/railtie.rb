@@ -1,6 +1,6 @@
 require 'rails'
 require 'katsudo/models'
-require 'katsudo/dispatch'
+require 'katsudo/controller'
 
 module Katsudo
   class Railtie < ::Rails::Railtie
@@ -9,7 +9,7 @@ module Katsudo
         include ActiveRecordExtension
       end
       ActiveSupport.on_load(:action_controller) do
-        include Dispatch::ControllerExtension
+        include ControllerExtension
       end
     end
 

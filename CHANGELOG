@@ -1,0 +1,7 @@
+== 0.0.4
+
+* Flash stack has been moved to 'active_tools' gem.
+
+== 0.0.1..0.0.3
+
+* Initial releases.
