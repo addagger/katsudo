@@ -1,14 +1,12 @@
 module Katsudo
-  module ControllerExtension
-	  extend ActiveSupport::Concern
+  class Collector < Array
+    def store!
+      each {|activity| activity.save}
+    end
+  end
 
-  	included do
-	    class Collector < Array
-	      def store!
-	        each {|activity| activity.save}
-	      end
-	    end
-	 	end
+  module ControllerExtension
+    extend ActiveSupport::Concern
 
     name = Katsudo.config.name
     class_name = Katsudo.config.activity_class_name
@@ -27,7 +25,7 @@ module Katsudo
           options = args.extract_options!
           class_eval do
             before_filter options do
-              @katsudo_collector ||= Katsudo::Dispatch::Collector.new
+              @katsudo_collector ||= Katsudo::Collector.new
             end
             after_filter options do
               @katsudo_collector.store!

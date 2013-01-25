@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{User activity for Rails}
   gem.summary       = %q{Stores activity traces + Flashing subsystem}
 
-	gem.add_dependency "active_tools"
+  gem.add_dependency "active_tools"
   
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
